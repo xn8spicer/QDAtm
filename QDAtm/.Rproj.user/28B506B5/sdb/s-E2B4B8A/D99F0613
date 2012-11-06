@@ -1,0 +1,15 @@
+{
+    "contents" : "\n108\ndown vote\naccepted\nIf you've got local source code you want to add to a new remote new git repository without 'cloning' the remote first, do the following (I often do this - you create your remote empty repository in bitbucket/github, then push up your source)\n\nCreate the remote repository, and get the URL such as git://github.com/youruser/somename.git\n\nIf your local GIT repo is already set up, skips steps 2 and 3\n\nLocally, at the root directory of your source, git init\n\nLocally, add and commit what you want in your initial repo (for everything, git add . git commit -m 'initial commit comment')\n\nto attach your remote repo with the name 'origin' (like cloning would do)\ngit remote add origin [URL From Step 1]\n\nto push up your master branch (change master to something else for a different branch):\ngit push origin master\n\n",
+    "created" : 1352174599978.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "2044139757",
+    "id" : "D99F0613",
+    "lastKnownWriteTime" : 1352072637,
+    "path" : "~/RStuff/README_GITHUB",
+    "properties" : {
+    },
+    "source_on_save" : false,
+    "type" : "text"
+}
