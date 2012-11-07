@@ -18,4 +18,8 @@ You can also embed plots, for example:
 ```{r fig.width=7, fig.height=6}
 plot(tdm, terms = findFreqTerms(tdm, lowfreq = 6)[1:25], corThreshold = 0.5)
 ```
-
+Or look for combinations....
+```{r}
+d<-c("oil","crude","prices")
+inspect(DocumentTermMatrix(crude,list(dictionary=d)))
+```

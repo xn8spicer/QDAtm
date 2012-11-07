@@ -220,7 +220,7 @@ tmIndex(ovid, "identifier == '2'")
 ## setMethod("GmaneSource",
 ##           signature(object = "ANY"),
 ##           function(object, encoding = "UTF-8") {
-##               ## ---code chunk---
+##               ## --i-code chunk---
 ##               new("GmaneSource", LoDSupport = FALSE, URI = object,
 ##                   Content = content, Position = 0, Encoding = encoding)
 ##           })
