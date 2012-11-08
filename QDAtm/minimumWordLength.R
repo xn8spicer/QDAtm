@@ -6,8 +6,10 @@ df[2,1]<-"Here is another sentence about tv"
 
 df.corpus<-Corpus(DataframeSource(data.frame(df[, 1])),
            control = list(stopwords=TRUE, minWordLength = 1))
+
+dtm <- DocumentTermMatrix(df.corpus, control = list(wordLengths=c(1,100))) 
 df.tdm<-TermDocumentMatrix(df.corpus,control = list(
-  stopwords=FALSE, minWordLength = 1))
+  stopwords=FALSE, wordLengths = c(1,100)))
 inspect(df.tdm["is"])
 searchFullText(df.corpus[[1]], "is")
 inspect(df.tdm["sentence"])

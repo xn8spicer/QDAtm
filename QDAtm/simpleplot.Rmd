@@ -10,7 +10,8 @@ To use plotting in tm package I needed to install Rgraphviz from [bioconductor][
 ```{r}
 library("tm")
 data("crude")
-tdm <- TermDocumentMatrix(crude, control = list (removePunctuation = TRUE,                                                  removeNumbers = TRUE,                                                  stopwords = TRUE))
+tdm <- TermDocumentMatrix(crude, control = list (removePunctuation = TRUE,                                                  removeNumbers = TRUE,                                                  stopwords = TRUE,
+    wordLengths=c(2,100)))
 ```
 
 You can also embed plots, for example:
