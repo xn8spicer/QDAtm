@@ -42,3 +42,22 @@ inspect(q64.tdm["laugh"])
 #plot(q64.tdm, terms = findFreqTerms(q64.tdm, lowfreq = 6)[1:25], corThreshold = 0.5)
 inspect(DocumentTermMatrix(q64.corpus,list(dictionary=d)))
 inspect(TermDocumentMatrix(q64.corpus,list(dictionary=d)))
+
+
+library(twitteR)
+rdmTweets<-userTimeline("rdatamining", n=200)
+(nDocs <- length(rdmTweets))
+rdmTweets[11:14]
+for (i in 11:14){
+  cat(paste("[[",i, "]] ",sep=""))
+  writeLines(strwrap(rdmTweets[[i]]$getText(), width=73))
+}
+df<-do.call("rbind",lapply(rdmTweets,as.data.frame))
+dim(df)
+library(tm)
+myCorpus<-Corpus(VectorSource(df$text))
+
+
+
+
+
