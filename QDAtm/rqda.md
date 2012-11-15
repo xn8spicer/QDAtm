@@ -143,10 +143,20 @@ Looking at the Database
 Output
 ------
 ####Reports
+summaryCodings()
 ####Plots
+Plot
 
 Extracting Data for Export
 ---------------------------
+
+```r
+# You will need to open project first Get codes and file names
+myCodes <- RQDAQuery("select  * from source inner join coding where source.id = coding.fid and coding.status = 1")
+# If you have code categories or file categories?  Then need to reshape
+# into file id (or case)level
+```
+
 
 Backup
 ------
