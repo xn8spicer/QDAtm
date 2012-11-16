@@ -25,16 +25,34 @@ The RQDA panel opens a separate window, but keep your normal RStudio console ope
 
 ![rqda-panel](figure/rqda-panel.png)
 
-Projects
---------
+The main panel includes....
+
+#### Projects
 For a new project, click on the "New Project" button and supply a name and associate the name to the folder on your system that you created above. This will create a file on your system with the extension '.rqda'.   Once the project has been created you can click the "Open Project" button.
 
+#### Backups
+You can backup your entire database easily.  Choose a standard naming convention so that the backups are easy to identify on your file system.  
+
+#### Last item: Settings 
 You can click on the "Settings" button to set some defaults for your project.  This is especially useful if several people are working on the same project because you can identify the person coding.
 
-You can include some project-level comments/documentation by clicking on the "Project Memo" button.
+n.b. Display Errors
+> GTK errors
+> 
 
-Files
------
+General Features of the Software
+--------------------------------
+#### Right-tabs/Panels
+There are x basic Panels
+#### Top-tabs
+Each panel has a set of tabs at the top for the most common actions relevant to that panel.
+#### Right-mouse Menus
+Each panel also has a set of actions that you can access with a right-mouse click in the panel area.   Some of the actions are exactly the same as the top-tabs, but there are additional actions that are very important here, so be sure to examine them.
+#### Memos
+You can include some project-level comments/documentation by clicking on the "Project Memo" button.  Memos can be attached to other levels such as the Codes, Files, Cases.   
+
+Files Panel
+-----------
 Files are the interviews for each Case in your study.  As of RQDA version 2.1 only plain text files are supported. Word documents or RTF files will need to be converted.  
 
 If you change the original text file in any way, you will need to re-copy the modified file again.    
@@ -75,10 +93,14 @@ closeProject()
 ```
 
 #### Use RQDA to enter your data
-The last way to create Case Files is to enter your text data directly into RQDA.  Click on the "Files" button and then the "New" button.  Enter a name for your Case and a text editor window will open for you to enter data.  However, you **cannot** edit the data once you save it.  
+The last way to create Case Files is to enter your text data directly into RQDA.  Click on the "Files" button and then the "New" button.  Enter a name for your Case and a text editor window will open for you to enter data.  Your data will not appear as separate files and you will need to open RQDA to edit the data.  However, we will see later that you can easily export the text from the RQDA database.  Using this method you will not need to worry about file conversion.  Note that to edit an existing file, right-click in the file listing area of the Files panel to locate "Edit File" menu option. 
 
-Coding
-------
+File Categories Panel
+---------------------
+You may have different file categories, for example an interview may be conducted as a face-to-face or telephone interview.  You can associate a "File Category" to each file in order to pull files of a specific category. 
+
+Codes Panel
+-----------
 Now that you have text in RQDA, you can begin coding.  
 * Click "Files" button and double-click to select your file
 * Click the "Codes" button and then "Add" to add new code names. Press "OK"
@@ -86,43 +108,48 @@ Now that you have text in RQDA, you can begin coding.
 * You can double-click on any code name to see all text segments that have used that code.
 * If you make a mistake, highlight the text and then click the "Unmark" button.
 
-Cases
------
+Cases Panel
+-----------
 If you have multiple interviews for one person in separate files, you can create a "Case" id to associate the files with a particular "Case" or unit of analysis.   
+
+Code Categories Panel
+---------------------
+Codes can be aggregated into Code Categories at any time during your coding.   A code can be in more than one category.   
+
+Attributes Panel
+----------------
+You can add attributes like gender, age group, school, etc to a File or a Case.  These are a bit different than codes or categories in that they are a variable attached to the case with a single value.   Advantages to using them are that you cannot possibly put someone in multiple categories than should be mutally exclusive.  Disadvantages are that attributes are not as easy to use through the GUI.   When you are adding attributes ask yourself whether you really need this information in order to do the *coding* rather than the analysis.   If you don't need it to code, you can always store the information in a standard data frame and merge your coding later.  
+
+Retrieving Data with the RQDA GUI
+---------------------------------
+You can view the results of your coding in a variety of ways.
 
 Coding Tips
 -----------
-* You can create a code name for 'questions' in your interview. This makes it easy to pull responses to a particular question from all cases
+* 
+* You can create a code name for each 'question' in your interview. This makes it easy to pull responses to a particular question from all cases
 * You can Merge
 * You can Rename
+* You many find it useful to use a standard prefix for Code Category names to make them easier to distinguish from the Codes in your reports and plots, e.g. "CC_health", "CC_education".
 
-Code Categories
----------------
-
-Attributes
-----------
-You can add attributes like gender, age group, school, etc to a File or a Case.  
-DON'T KNOW HOW
-
-File Categories
----------------
-You may have different file categories, for example an interview may be conducted as a face-to-face or telephone interview.  You can associate a "File Category" to each file in order to pull files of a specific category. 
-
-Memos
------
-
-Looking at the Database
------------------------
 
 Output
 ------
-####Reports
-summaryCodings()
-####Plots
-Plot
+#### Reports
+From the GUI:
 
-Extracting Data for Export
----------------------------
+From the command line in RStudio:
+summaryCodings()
+#### Plots
+You can create plots to describe your codings from the Code Categories panel.  
+
+Looking at the Database
+-----------------------
+You may never actually need to look at the Database that stores you coding, but it is very easy to do and it will help you understand how to use the software.  The most common reasons to look at the database include:
+#### Export Text of Interviews as Files
+If you entered your interviews directly into RQDA, you will want to have copies of the text in plain text files that are separate from the database.
+
+#### Extracting Data for Export
 ```{r eval=FALSE}
 # You will need to open project first
 # Get codes and file names
@@ -131,16 +158,13 @@ myCodes<-RQDAQuery("select  * from source inner join coding where source.id = co
 # Then need to reshape into file id (or case)level
 ```
 
-Backup
-------
-
 Resources
 ---------
-[1] There is a terrific series of videos on using RQDA on YouTube  [http://www.youtube.com/playlist?list=PL66CB2FF65368715C] (http://www.youtube.com/playlist?list=PL66CB2FF65368715C).   I highly recommend them.  
+[1] There is a terrific series of videos on using RQDA on YouTube  [http://www.youtube.com/playlist?list=PL66CB2FF65368715C] (http://www.youtube.com/playlist?list=PL66CB2FF65368715C).   **I highly recommend them.**  
 
 [2] The official citation for the package follows:
 HUANG, Ronggui. (2011). RQDA: R-based Qualitative Data Analysis. R
-  package version 0.2-2. URL http://rqda.r-forge.r-project.org/.  Be sure to give the author credit in your publications. 
+  package version 0.2-2. URL http://rqda.r-forge.r-project.org/.  **Be sure to give the author credit in your publications.**
 
 
 ```{r eval=FALSE}
