@@ -59,7 +59,7 @@ If you change the original text file in any way, you will need to re-copy the mo
 
 You have several options for inserting your text data into RQDA...
 
-#### Import an existing plain text files
+#### Import existing plain text files
 The content of your text files will be copied into a database when you import them into RQDA. To import a file into your project, click the "Files" button and then the "Import" button, then select the text file.
 
 #### Bulk load 
@@ -71,33 +71,13 @@ If you want to import many files at once, you can use the `write.Files` command.
 # named q64
 
 q64 <- read.csv(file = "q64.csv")
-str(q64)
-```
-
-```
-## 'data.frame':	470 obs. of  2 variables:
-##  $ ik_64_open: Factor w/ 437 levels "a lot, sometimes they pick on miranda",..: 152 131 145 320 29 352 228 207 51 306 ...
-##  $ kidID     : int  9 10 11 14 15 17 22 23 24 25 ...
-```
-
-```r
-head(q64)
-```
-
-```
-##                                             ik_64_open kidID
-## 1                            play basketball, watch tv     9
-## 2   play around, hit each other, make each other laugh    10
-## 3                    play basketball, play video games    11
-## 4                                       talk, watch tv    14
-## 5                                           don't know    15
-## 6 try to get staff to let them ride bikes and watch tv    17
 ```
 
 
 
 ```r
-# Insert file and contents into db Startup RQDA
+# Startup RQDA
+
 library(RQDA)
 RDQA()
 
@@ -113,11 +93,23 @@ q <- as.list(as.character(q64$ik_64_open))
 # Assign the subject ID as the name of each File
 
 names(q) <- q64$kidID
+```
 
-# Here are the first 3 lines
-
+Here are the first 3 lines, you can see that you are creating a list of open-ended responses and each row is named with the subject ID.
+```
 q[1:3]
 
+$`9`
+[1] "play basketball, watch tv"
+
+$`10`
+[1] "play around, hit each other, make each other laugh"
+
+$`11`
+[1] "play basketball, play video games"
+```
+
+```r
 # Use the write.FileList command to copy this info into the RQDA database
 
 write.FileList(q)
@@ -134,21 +126,19 @@ The last way to create Case Files is to enter your text data directly into RQDA.
 Codes Panel
 -----------
 #### Adding codes
-Click the Codes panel button and use the +Add button to enter your codes. Press "OK" You can add a Memo for each code to describe its usage.
+Click the Codes panel button and use the Add button to enter your codes. Press "OK" You can add a Memo for each code to describe its usage.
 
 #### Marking your text with codes
 * Click "Files" button and double-click to select your file
 * Return to the "Codes" panel and highlight the text in your File and select the Code name and then click the "Mark" button.
 * If you make a mistake, highlight the text and then click the "Unmark" button.
 
-#### Basic retrieving of marked files
+#### Basic retrieval of marked files
 * You can double-click on any code name (or click the Coding button) to see all text segments that have used that code.
-
 
 File Categories Panel
 ---------------------
 You may have different file categories, for example an interview may be conducted as a face-to-face or telephone interview.  You can associate a "File Category" to each file in order to pull files of a specific category. 
-
 
 Cases Panel
 -----------
@@ -179,7 +169,6 @@ Coding Tips
 * You many find it useful to use a standard prefix for Code Category names to make them easier to distinguish from the Codes in your reports and plots, e.g. "CC_health", "CC_education".
 * You can have 2 different sets of codes. Go to the Settings panel to switch to a second code set and return to the Codes panel to add them. 
 
-
 Output
 ------
 #### Reports
@@ -189,7 +178,6 @@ From the GUI: In the Codes panel you can right-mouse on anywhere in the panel an
 
 You can also select a file in the Files panel to export as html with the codings
 [View report](file:///Users/jeannespicer/RStuff/qda_tm/QDAtm/QDAtm/subject204.html)
-
 
 From the command line: You can request information from the command line in RStudio when the project is Open. 
 
@@ -220,10 +208,16 @@ Number of files associated with each code.
 #### Plots
 You can create plots to describe your codings from the Code Categories panel.  Select one or more Code Categories and right-mouse to select "Plot Selected Code Categories".  A new window will open with a sociogram of your codings. This is an active diagram and there are many manipulations you can make.   You can export the final diagram to postscript.
 
-
 Looking at the Database
 -----------------------
-You may never actually need to look at the Database that stores you coding, but it is very easy to do and it will help you understand how to use the software.  The most common reasons to look at the database include:
+You may never actually need to look at the Database that stores you coding, but it is very easy to do and it will help you understand how to use the software.  Download the SQLite Manager Firefox extension and take a look at your data.
+
+![rqda-panel](figure/SQLITE.png)
+
+You can write queries in SQLite Manager or from the R console in RStudio.  For the latter, just wrap your SQL query in the `RDQAQuery()` function.
+The most common reasons to look at the database include:
+
+#### Searching for text and complex queries
 
 #### Extracting Data for Export
 
@@ -237,16 +231,35 @@ myCodes <- RQDAQuery("select source.name as filename, source.id as fid, C.cid as
 myPersonLevelFile <- reshape(myCodes, v.names = "code", timevar = "cid", idvar = "fid", 
     direction = "wide")
 
+# Count number of codes per person
+myPersonLevelFile$nCodes <- rowSums(!is.na(myPersonLevelFile[3:5]))
+
 # Grab category info
 
 myCodeCats <- RQDAQuery("select  treecode.catid, codecat.name as codecat, treecode.cid\nfrom treecode left join codecat\nwhere treecode.catid = codecat.catid\norder by treecode.catid, treecode.cid")
-
 ```
+
 
 
 #### Export Text of Interviews as Files
 If you entered your interviews directly into RQDA, you will want to have copies of the text in plain text files that are separate from the database.
 
+```r
+# Pull file name and text from Source table
+
+myData <- RQDAQuery("select name, file from source order by name")
+
+# You can save the myData table as is or optionally split the text by file
+# name
+
+spt1 <- split(myData, myData$name)
+
+# Then write out separate text files
+
+lapply(names(spt1), function(x) {
+    write.table(spt1[[x]], file = paste("output", x, ".txt", sep = ""))
+})
+```
 
 
 Resources
@@ -259,15 +272,3 @@ HUANG, Ronggui. (2011). RQDA: R-based Qualitative Data Analysis. R
 
 Text mining?
 -------------
-
-```r
-# Create Corpus from a directory of text files
-library(tm)
-source <- DirSource("~/RStuff/qda_tm/QDAtm/QDAtm/responses/")  #input path for documents
-YourCorpus <- Corpus(source, readerControl = list(reader = readPlain))  #load in documents
-tdm <- TermDocumentMatrix(YourCorpus, control = list(removePunctuation = TRUE, 
-    removeNumbers = TRUE, stopwords = TRUE, wordLengths = c(4, 100)))
-plot(tdm, terms = findFreqTerms(tdm, lowfreq = 16)[1:25], corThreshold = 0.25)
-
-```
-

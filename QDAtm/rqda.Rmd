@@ -57,7 +57,7 @@ If you change the original text file in any way, you will need to re-copy the mo
 
 You have several options for inserting your text data into RQDA...
 
-#### Import an existing plain text files
+#### Import existing plain text files
 The content of your text files will be copied into a database when you import them into RQDA. To import a file into your project, click the "Files" button and then the "Import" button, then select the text file.
 
 #### Bulk load 
@@ -67,13 +67,11 @@ If you want to import many files at once, you can use the `write.Files` command.
 # load csv containing case ID and open-ended question into an R data frame named q64
 
 q64<-read.csv(file="q64.csv")
-str(q64)
-head(q64)
 ```
 
 ```{r eval=FALSE}
-# Insert file and contents into db
 # Startup RQDA
+
 library(RQDA)
 RDQA ()
 
@@ -88,11 +86,21 @@ q<-as.list(as.character(q64$ik_64_open))
 # Assign the subject ID as the name of each File
 
 names(q)<-q64$kidID
-
-# Here are the first 3 lines 
-
+```
+Here are the first 3 lines, you can see that you are creating a list of open-ended responses and each row is named with the subject ID.
+```
 q[1:3]
 
+$`9`
+[1] "play basketball, watch tv"
+
+$`10`
+[1] "play around, hit each other, make each other laugh"
+
+$`11`
+[1] "play basketball, play video games"
+```
+```{r eval=FALSE}
 # Use the write.FileList command to copy this info into the RQDA database
 
 write.FileList(q)
@@ -108,14 +116,14 @@ The last way to create Case Files is to enter your text data directly into RQDA.
 Codes Panel
 -----------
 #### Adding codes
-Click the Codes panel button and use the +Add button to enter your codes. Press "OK" You can add a Memo for each code to describe its usage.
+Click the Codes panel button and use the Add button to enter your codes. Press "OK" You can add a Memo for each code to describe its usage.
 
 #### Marking your text with codes
 * Click "Files" button and double-click to select your file
 * Return to the "Codes" panel and highlight the text in your File and select the Code name and then click the "Mark" button.
 * If you make a mistake, highlight the text and then click the "Unmark" button.
 
-#### Basic retrieving of marked files
+#### Basic retrieval of marked files
 * You can double-click on any code name (or click the Coding button) to see all text segments that have used that code.
 
 File Categories Panel
@@ -190,9 +198,19 @@ You can create plots to describe your codings from the Code Categories panel.  S
 
 Looking at the Database
 -----------------------
-You may never actually need to look at the Database that stores you coding, but it is very easy to do and it will help you understand how to use the software.  The most common reasons to look at the database include:
+You may never actually need to look at the Database that stores you coding, but it is very easy to do and it will help you understand how to use the software.  Download the SQLite Manager Firefox extension and take a look at your data.
+
+![rqda-panel](figure/SQLITE.png)
+
+
+The most common reasons to look at the database include:
+
+#### Searching for text and complex queries
+SQLite Manager includes a point-and-click Search window that will allow you to locate files easily.  For example you may want to find all files that contain a specific word or combination of words.
 
 #### Extracting Data for Export
+You can also write queries from the R console in RStudio.  For the latter, just wrap your SQL query in the `RDQAQuery()` function.  This allows you to merge your data with related files for analysis with R.  Here is an example: 
+
 ```{r eval=FALSE}
 # You will need to open project first and get codes and file names
 
@@ -217,8 +235,22 @@ myCodeCats<-RQDAQuery("select  treecode.catid, codecat.name as codecat, treecode
     order by treecode.catid, treecode.cid")
 ```
 
+
 #### Export Text of Interviews as Files
 If you entered your interviews directly into RQDA, you will want to have copies of the text in plain text files that are separate from the database.
+```{r eval=FALSE}
+# Pull file name and text from Source table
+
+myData<-RQDAQuery("select name, file from source order by name")
+
+# You can save the myData table as is or optionally split the text by file name
+
+spt1<-split(myData, myData$name)
+
+# Then write out separate text files
+
+lapply(names(spt1), function(x){write.table(spt1[[x]], file = paste("output", x,".txt", sep = ""))})
+```
 
 Resources
 ---------
