@@ -230,13 +230,3 @@ HUANG, Ronggui. (2011). RQDA: R-based Qualitative Data Analysis. R
 
 Text mining?
 -------------
-```{r eval=FALSE}
-# Create Corpus from a directory of text files
-library(tm)
-source <- DirSource("~/RStuff/qda_tm/QDAtm/QDAtm/responses/") #input path for documents
-YourCorpus <- Corpus(source, readerControl=list(reader=readPlain)) #load in documents
-tdm <- TermDocumentMatrix(YourCorpus, control = list (removePunctuation = TRUE,                                                  removeNumbers = TRUE,                                                  stopwords = TRUE,
-    wordLengths=c(4,100)))
-plot(tdm, terms = findFreqTerms(tdm, lowfreq = 16)[1:25], corThreshold = 0.25)
-
-```
