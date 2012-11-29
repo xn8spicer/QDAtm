@@ -58,6 +58,25 @@ library(tm)
 myCorpus<-Corpus(VectorSource(df$text))
 
 
+# More trials.  Seems that the data is seen as sentences instead of words
+
+```{r eval=FALSE}
+# Create Corpus from a directory of text files
+# Seems like it 
+library(tm)
+source <- DirSource("~/RStuff/qda_tm/QDAtm/QDAtm/responses/") #input path for documents
+YourCorpus <- Corpus(source, readerControl=list(reader=readPlain)) #load in documents
+tdm <- TermDocumentMatrix(YourCorpus, control = list (removePunctuation = TRUE,                                                  removeNumbers = TRUE,                                                  stopwords = TRUE,
+                                                      wordLengths=c(4,100)))
+dtm <- DocumentTermMatrix(YourCorpus, control = list (removePunctuation = TRUE,                                                  removeNumbers = TRUE,                                                  stopwords = TRUE,
+                                                      wordLengths=c(4,100)))
+
+plot(tdm, terms = findFreqTerms(tdm)[1:25], corThreshold = 0.25)
+library(slam)
+cs<-col_sums(dtm)
+head(findFreqTerms(tdm))
+```
+
 
 
 
