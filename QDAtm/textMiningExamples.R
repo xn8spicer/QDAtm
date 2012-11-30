@@ -1,13 +1,16 @@
-openProject("~/Documents/RStuff/QDAtm/QDAtm/QDAtm/q64.rqda", updateGUI=TRUE)
-myData<-RQDAQuery("select name, file from source")
+# Open your project from the command line
+#openProject("~/Documents/RStuff/QDAtm/QDAtm/QDAtm/q64.rqda", updateGUI=TRUE)
+#openProject("~/RStuff/qda_tm/QDAtm/QDAtm/QDAtm/q64.rqda", updateGUI=TRUE)
+#myData<-RQDAQuery("select name, file from source")
+
+# Used to make handout
+
+load("myData.Rda")
+str(myData)
 library(tm)
 
-#mydata.corpus<-Corpus(VectorSource(myData$file))
-mydata.corpus <- Corpus(VectorSource(myData$file),control = list(
-  removePunctuation=TRUE,
-  removeNumbers=TRUE,
-  stopwords=TRUE,
-  minWordLength=1))
+# Create corpus to utilize text-mining package functions
+mydata.corpus<-Corpus(VectorSource(myData$file), control=list(minWordLength=1))
 
 # make each letter lowercase
 mydata.corpus <- tm_map(mydata.corpus, tolower)
@@ -19,11 +22,11 @@ mydata.corpus <- tm_map(mydata.corpus, removePunctuation)
 
 
 # remove generic and custom stopwords
-my_stopwords <- c(stopwords('english'), 'prolife', 'prochoice')
-mydata.corpus <- tm_map(mydata.corpus, removeWords, my_stopwords)
+#my_stopwords <- c(stopwords('english'), 'prolife', 'prochoice')
+#mydata.corpus <- tm_map(mydata.corpus, removeWords, my_stopwords)
 
 # build a term-document matrix
-mydata.dtm <- TermDocumentMatrix(mydata.corpus, control = list(wordLengths = c(1,30)))
+mydata.dtm <- TermDocumentMatrix(mydata.corpus, control = list(stopwords=TRUE,wordLengths = c(1,30)))
 
 # inspect the document-term matrix
 inspect(mydata.dtm["tv"])

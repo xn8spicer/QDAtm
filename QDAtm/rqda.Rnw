@@ -1,19 +1,22 @@
+\documentclass{article}
+
+\begin{document}
+\SweaveOpts{concordance=TRUE}
+
 Qualitative Data Analysis with RQDA
 ====================================
-Introduction
-------------
+\section*{Introduction}
+
 This workshop covers the mechanics, rather than the methods, for performing a qualitative data analysis.  The examples will use the RQDA package running under RStudio.
 
-Obtaining RQDA
---------------
+\section*{Obtaining RQDA}
 RQDA is available on both PRI windows application servers: Kiev and Moscow. It is also available on the PRI linux network. Note that you must ssh into finland to run it as it does NOT run through the webserver version. 
 
 If you want to load the software on your own machine, you will will not only be installing the RQDA package, but also GTK and RSQLite.   Information on the procedure can be found on the RQDA website [http://rqda.r-forge.r-project.org/](http://rqda.r-forge.r-project.org/).
 
 Additionally, you will want to install the FireFox add-on: SQLite Manager.
 
-Starting RQDA
----------------
+\section*{Starting RQDA}
 Once your packages are loaded you will want to create a folder to store your text files.   (In RStudio, you can create an 'RStudio Project' in this folder.)  In addition to the text files, you can store any R programs and you will create an 'RDQA Project' coding database there too.
 
 Now load the RQDA package by checking it in the Packages list in RStudio.  The first time you load the library, RQDA should start on its own, but if you close it during the session you can restart it again from the command line:
@@ -25,28 +28,29 @@ The RQDA panel opens a separate window, but keep your normal RStudio console ope
 
 ![rqda-panel](figure/rqda-panel.png)
 
+The main panel includes....
+
+\subsection*{Projects}
+For a new project, click on the "New Project" button and supply a name and associate the name to the folder on your system that you created above. This will create a file on your system with the extension '.rqda'.   Once the project has been created you can click the "Open Project" button.
+
+\subsection*{Backups}
+You can backup your entire database easily.  Choose a standard naming convention so that the backups are easy to identify on your file system.  
+
+\subsection*{Settings} 
+You can click on the "Settings" button to set some defaults for your project.  This is especially useful if several people are working on the same project because you can identify the person coding.
 
 n.b. GTK display will likely throw errors. In most cases you can simply ignore the errors. On Windows, your theme could obfuscate the buttons.  If so, change the theme.
 
 General Features of the Software
 --------------------------------
-#### Right-tabs/Panels
+\subsection*{Right-tabs/Panels}
 There are 9 basic Panels
-#### Top-tabs
+\subsection*{Top-tabs}
 Each panel has a set of tabs at the top for the most common actions relevant to that panel.
-#### Right-mouse Menus
+\subsection*{Right-mouse Menus}
 Each panel also has a set of actions that you can access with a right-mouse click in the panel area.   Some of the actions are exactly the same as the top-tabs, but there are additional actions that are very important here, so be sure to examine them.
-#### Memos
+\subsection*{Memos}
 You can include some project-level comments/documentation by clicking on the "Project Memo" button.  Memos can be attached to other levels such as the Codes, Files, Cases.   
-
-Projects Panel
---------------
-
-For a new project, click on the "New Project" button and supply a name and associate the name to the folder on your system that you created above. This will create a file on your system with the extension '.rqda'.   Once the project has been created you can click the "Open Project" button.
-
-#### Backups
-You can backup your entire database easily.  Choose a standard naming convention so that the backups are easy to identify on your file system.  
-
 
 Files Panel
 -----------
@@ -56,10 +60,10 @@ If you change the original text file in any way, you will need to re-copy the mo
 
 You have several options for inserting your text data into RQDA...
 
-#### Import existing plain text files
+\subsection*{Import existing plain text files}
 The content of your text files will be copied into a database when you import them into RQDA. To import a file into your project, click the "Files" button and then the "Import" button, then select the text file.
 
-#### Bulk load 
+\subsection*{Bulk load }
 If you want to import many files at once, you can use the `write.Files` command.  This is usually not an issue when you are coding individual transcripts, but it is a very useful feature when you want to extract open-ended questions from of a larger survey questionnaire for coding.  For example, I have a large survey of multiple choice questions, but question 64 is an open-ended question "What do you do with your friends when you are not in school?"  I can pull those responses into RQDA for coding.  To begin, export the subject ID and open-ended question variables into a csv file from your SAS,Stata, SPSS, etc dataset and load the csv into an R data frame. 
 
 ```{r}
@@ -109,10 +113,10 @@ write.FileList(q)
 closeProject()
 ```
 
-#### Use RQDA to enter your data
+\subsection*{Use RQDA to enter your data}
 The last way to create Case Files is to enter your text data directly into RQDA.  Click on the "Files" button and then the "New" button.  Enter a name for your Case and a text editor window will open for you to enter data.  Your data will not appear as separate files and you will need to open RQDA to edit the data.  However, we will see later that you can easily export the text from the RQDA database.  Using this method you will not need to worry about file conversion.  Note that to edit an existing file, right-click in the file listing area of the Files panel to locate "Edit File" menu option. 
 
-Codes Panel
+\section*{Codes Panel}
 -----------
 #### Adding codes
 Click the Codes panel button and use the Add button to enter your codes. Press "OK" You can add a Memo for each code to describe its usage.
@@ -140,11 +144,6 @@ Codes can be aggregated into Code Categories at any time during your coding.   A
 Attributes Panel
 ----------------
 You can add attributes like gender, age group, school, etc to a File or a Case.  These are a bit different than codes or categories in that they are a variable attached to the case with a single value.   Advantages to using them are that you cannot possibly put someone in multiple categories that should be mutally exclusive.  Disadvantages are that attributes are not as easy to use through the GUI.   When you are adding attributes ask yourself whether you really need this information in order to do the *coding* rather than the analysis.   If you don't need it to code, you can always store the information in a standard data frame and merge your coding later.  
-
-Settings Panel
---------------
-You can click on the "Settings" button to set some defaults for your project.  This is especially useful if several people are working on the same project because you can identify the person coding.  Other settings will be useful in the next section on Retrieving Data.
-
 
 Retrieving Data with the RQDA GUI
 ---------------------------------
@@ -256,21 +255,17 @@ spt1<-split(myData, myData$name)
 lapply(names(spt1), function(x){write.table(spt1[[x]], file = paste("output", x,".txt", sep = ""))})
 ```
 
-Text mining
--------------
-Another great thing about RQDA is that you have access to various R text-mining packages. [Sample Script Demo]
-
 Resources
 ---------
 [1] There is a terrific series of videos on using RQDA on YouTube  [http://www.youtube.com/playlist?list=PL66CB2FF65368715C] (http://www.youtube.com/playlist?list=PL66CB2FF65368715C).   **I highly recommend them.**  
 
 [2] The official citation for the package follows:
-
 HUANG, Ronggui. (2011). RQDA: R-based Qualitative Data Analysis. R
   package version 0.2-2. URL http://rqda.r-forge.r-project.org/.  **Be sure to give the author credit in your publications.**
 
-[3] For a concise comparison of text mining and qualitative research you might start with: 
+Text mining?
+-------------
 
-YU, C. H., Jannasch-Pennell, A., & DiGangi, S. (2011). Compatibility between text mining and qualitative research in the perspectives of grounded theory, content analysis, and reliability. The Qualitative Report, 16(3), 730-744. Retrieved from http://www.nova.edu/ssss/QR/QR16-3/yu.pdf
 
 
+\end{document}
