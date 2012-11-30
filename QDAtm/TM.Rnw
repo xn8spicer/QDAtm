@@ -1,0 +1,105 @@
+\documentclass{article}
+\usepackage[margin=0.75in]{geometry}
+\begin{document}
+\title{Mining Your Qualitative Text}
+\author{Jeanne Spicer}
+\date {\today}
+\maketitle
+
+\section*{Data}
+We will assume that you are starting with a data frame containing your plain text with one subject per row.  (This could be the file you export from RQDA)
+
+<<echo=FALSE>>=
+# Load file extracted from RQDA database and the tm package
+load("myData.Rda")
+library(tm)
+@
+
+\section*{Create Corpus}
+Create a corpus data object so that you can utilize \texttt{tm} package functions and transformations.  You can change case, remove punctuation or cluster words into their root stems.   Use the getTransformations() command to view your options.
+
+<<Transformations>>=
+mydata.corpus<-Corpus(VectorSource(myData$file), control=list(minWordLength=1))
+
+# make each letter lowercase
+mydata.corpus <- tm_map(mydata.corpus, tolower)
+
+# remove punctuation
+mydata.corpus <- tm_map(mydata.corpus, removePunctuation)
+@
+\section*{Examine} 
+The tm package has some functions to help you examine your data.  The TermDocumentMatrix function prepares a matrix of word counts.  You can use pre-defined lists of stopwords or create your own. 
+
+<<Examine>>=
+# build a term-document matrix 
+mydata.dtm <- TermDocumentMatrix(mydata.corpus, control = list(stopwords=TRUE,wordLengths = c(1,30)))
+
+# inspect the document-term matrix for the occurrance of the word "tv" in the first 10 documents
+inspect(mydata.dtm["tv",1:10,])
+
+# inspect most popular words
+findFreqTerms(mydata.dtm, lowfreq=30)
+
+# associations
+findAssocs(mydata.dtm, 'talk', 0.20)
+
+# pull counts for top 30 words
+freqwrds <- sort(rowSums(as.matrix(mydata.dtm)), decreasing=TRUE)
+freqwrds[1:30]
+@
+\newpage
+
+\section*{Visualizations}
+<<prepareforplot>>=
+
+# remove sparse terms to simplify the cluster plot
+# Note: tweak the sparse parameter to determine the number of words.
+# About 10-30 words is good.
+mydata.dtm2 <- removeSparseTerms(mydata.dtm, sparse=0.95)
+@
+<<results="hide" >>=
+# convert the sparse term-document matrix to a standard data frame
+mydata.df <- as.data.frame(inspect(mydata.dtm2))
+# inspect dimensions of the data frame
+nrow(mydata.df)
+ncol(mydata.df)
+@
+\subsection*{Dendogram}
+
+\begin{figure}[h]
+\begin{center}
+<<fig=TRUE, echo=FALSE, height=5, width=5>>=
+mydata.df.scale <- scale(mydata.df)
+d <- dist(mydata.df.scale, method = "euclidean") # distance matrix
+fit <- hclust(d, method="ward")
+plot(fit) # display dendogram
+# Show clusters
+groups <- cutree(fit, k=5) # cut tree into 5 clusters
+# draw dendogram with red borders around the 5 clusters
+rect.hclust(fit, k=5, border="red")
+
+@
+\end{center}  
+\end{figure}
+
+
+\subsection*{Fun with Word Clouds}
+<<>>=
+library(wordcloud)
+# calculate the frequency of words using sparse-term reduced matrix
+cts <- sort(rowSums(as.matrix(mydata.dtm2)), decreasing=TRUE)
+myNames <- names(cts)
+wcdata <- data.frame(word=myNames, freq=cts)
+@
+
+\begin{figure}[h]
+\begin{center}
+<<fig=TRUE, echo=FALSE, height=3, width=6>>=
+wordcloud(wcdata$word, wcdata$freq, min.freq=3)
+@
+  \caption{Word Cloud}
+\end{center}  
+\end{figure}
+
+
+\end{document}
