@@ -1,22 +1,24 @@
 \documentclass{article}
 \usepackage[margin=0.75in]{geometry}
+\usepackage{hyperref}
 \begin{document}
 \title{Mining Your Qualitative Text}
 \author{Jeanne Spicer}
 \date {\today}
 \maketitle
+\abstract{This article supplements the RQDA tutorial demonstrating a few additional text-processing features available in R for those conducting qualitative research.}
 
 \section*{Data}
-We will assume that you are starting with a data frame containing your plain text with one subject per row.  (This could be the file you export from RQDA)
+We will assume that you are starting with a data frame containing your plain text with one subject per row.  This could be the file you export from RQDA with either the full-text or the codings for each subject.  Install and load the \texttt{tm} package.  
+
 
 <<echo=FALSE>>=
-# Load file extracted from RQDA database and the tm package
 load("myData.Rda")
 library(tm)
 @
 
 \section*{Create Corpus}
-Create a corpus data object so that you can utilize \texttt{tm} package functions and transformations.  You can change case, remove punctuation or cluster words into their root stems.   Use the getTransformations() command to view your options.
+Create a corpus data object so that you can utilize \texttt{tm} package functions and transformations.  You can change case, remove punctuation or cluster words into their root stems.   Use the \texttt{getTransformations() }command to view your options.  Here we start with a dataframe extracted from RQDA --  ``\texttt{myData}'' containing responses to an open-ended survey question in the variable ``\texttt{file}''.
 
 <<Transformations>>=
 mydata.corpus<-Corpus(VectorSource(myData$file), control=list(minWordLength=1))
@@ -27,8 +29,8 @@ mydata.corpus <- tm_map(mydata.corpus, tolower)
 # remove punctuation
 mydata.corpus <- tm_map(mydata.corpus, removePunctuation)
 @
-\section*{Examine} 
-The tm package has some functions to help you examine your data.  The TermDocumentMatrix function prepares a matrix of word counts.  You can use pre-defined lists of stopwords or create your own. 
+\section*{Examine Terms} 
+The \texttt{tm} package has some functions to help you examine your data.  The \texttt{TermDocumentMatrix} function prepares a matrix of word counts.  You can use pre-defined lists of stopwords or create your own. 
 
 <<Examine>>=
 # build a term-document matrix 
@@ -40,19 +42,17 @@ inspect(mydata.dtm["tv",1:10,])
 # inspect most popular words
 findFreqTerms(mydata.dtm, lowfreq=30)
 
-# associations
+# associations of word "talk" with other terms
 findAssocs(mydata.dtm, 'talk', 0.20)
 
 # pull counts for top 30 words
 freqwrds <- sort(rowSums(as.matrix(mydata.dtm)), decreasing=TRUE)
 freqwrds[1:30]
 @
-\newpage
 
-\section*{Visualizations}
+After examining your terms, you may want to combine terms, remove sparse terms or perform additional transformations in preparation for further processing.  Here we remove sparsely used terms from the term-document matrix so that we can create some plots.
+
 <<prepareforplot>>=
-
-# remove sparse terms to simplify the cluster plot
 # Note: tweak the sparse parameter to determine the number of words.
 # About 10-30 words is good.
 mydata.dtm2 <- removeSparseTerms(mydata.dtm, sparse=0.95)
@@ -60,30 +60,38 @@ mydata.dtm2 <- removeSparseTerms(mydata.dtm, sparse=0.95)
 <<results="hide" >>=
 # convert the sparse term-document matrix to a standard data frame
 mydata.df <- as.data.frame(inspect(mydata.dtm2))
+@
+<<>>=
 # inspect dimensions of the data frame
 nrow(mydata.df)
 ncol(mydata.df)
 @
-\subsection*{Dendogram}
 
-\begin{figure}[h]
-\begin{center}
-<<fig=TRUE, echo=FALSE, height=5, width=5>>=
+\section*{Hierarchical Cluster Analysis}
+You can use the R's cluster analysis functions and packages to identify groups of terms.
+<<>>=
 mydata.df.scale <- scale(mydata.df)
 d <- dist(mydata.df.scale, method = "euclidean") # distance matrix
 fit <- hclust(d, method="ward")
+@
+
+\begin{figure}[h]
+\begin{center}
+<<fig=TRUE,  height=5, width=5>>=
 plot(fit) # display dendogram
 # Show clusters
 groups <- cutree(fit, k=5) # cut tree into 5 clusters
 # draw dendogram with red borders around the 5 clusters
 rect.hclust(fit, k=5, border="red")
-
 @
+  \caption{5-Clusters}
+
 \end{center}  
 \end{figure}
 
-
-\subsection*{Fun with Word Clouds}
+\newpage{}
+\section*{Fun with Word Clouds}
+Word clouds are a popular method of visualizing the most frequently used terms.
 <<>>=
 library(wordcloud)
 # calculate the frequency of words using sparse-term reduced matrix
@@ -95,11 +103,18 @@ wcdata <- data.frame(word=myNames, freq=cts)
 \begin{figure}[h]
 \begin{center}
 <<fig=TRUE, echo=FALSE, height=3, width=6>>=
-wordcloud(wcdata$word, wcdata$freq, min.freq=3)
+# pick a color palette
+pal <- brewer.pal(8,"Dark2")
+# plot words occurring at least 2 times
+wordcloud(wcdata$word, wcdata$freq, min.freq=2, colors=pal)
 @
   \caption{Word Cloud}
 \end{center}  
 \end{figure}
 
+\section*{}
+\begin{thebibliography}{99}
+\bibitem{bib:one_article} For more information on text-mining with R, see the Natural Language Processing task view \url{http://cran.r-project.org/web/views/NaturalLanguageProcessing.html}
+\end{thebibliography}
 
 \end{document}

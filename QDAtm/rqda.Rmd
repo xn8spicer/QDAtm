@@ -262,7 +262,7 @@ lapply(names(spt1), function(x){write.table(spt1[[x]], file = paste("output", x,
 
 Text mining
 -------------
-Another great thing about RQDA is that you have access to various R text-mining packages. [Sample Script Demo]
+Another great thing about RQDA is that you have access to various R text-mining packages. [See the article "Mining your Qualitative Text"]
 
 Resources
 ---------
