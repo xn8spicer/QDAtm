@@ -4,8 +4,9 @@
 \usepackage{amssymb}
 
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 \title{Qualitative Data Analysis with RQDA}
-\author{Jeanne Spicer}
+\author{R Interest Group}
 \date {\today}
 \maketitle
 \abstract{This workshop covers the mechanics, rather than the methods, for performing a qualitative data analysis.  The examples will use the RQDA package running under RStudio.}

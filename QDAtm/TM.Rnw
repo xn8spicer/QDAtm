@@ -2,8 +2,9 @@
 \usepackage[margin=0.75in]{geometry}
 \usepackage{hyperref}
 \begin{document}
+\SweaveOpts{concordance=TRUE}
 \title{Mining Your Qualitative Text}
-\author{Jeanne Spicer}
+\author{R Interest Group}
 \date {\today}
 \maketitle
 \abstract{This article supplements the RQDA tutorial demonstrating a few additional text-processing features available in R for those conducting qualitative research.}
@@ -57,7 +58,7 @@ After examining your terms, you may want to combine terms, remove sparse terms o
 # About 10-30 words is good.
 mydata.dtm2 <- removeSparseTerms(mydata.dtm, sparse=0.95)
 @
-<<results="hide" >>=
+<<results=hide>>=
 # convert the sparse term-document matrix to a standard data frame
 mydata.df <- as.data.frame(inspect(mydata.dtm2))
 @
@@ -74,6 +75,7 @@ mydata.df.scale <- scale(mydata.df)
 d <- dist(mydata.df.scale, method = "euclidean") # distance matrix
 fit <- hclust(d, method="ward")
 @
+\newpage{}
 
 \begin{figure}[h]
 \begin{center}
@@ -89,7 +91,6 @@ rect.hclust(fit, k=5, border="red")
 \end{center}  
 \end{figure}
 
-\newpage{}
 \section*{Fun with Word Clouds}
 Word clouds are a popular method of visualizing the most frequently used terms.
 <<>>=
